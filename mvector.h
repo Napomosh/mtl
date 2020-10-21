@@ -14,7 +14,7 @@
 
 namespace ns{
 	/**
-	*	@date 16.08.2020
+	*	@date 16.09.2020
 	*
 	*	Implementation of STL container vector for train my skill in
 	*	C++ programming and writing code documentation.
