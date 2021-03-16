@@ -1,14 +1,5 @@
 #include "mvector.h"
-
-TEST(PalTestCase, PalindromTrueTest) {
-
-  EXPECT_EQ(is_palindrom("112211"), true);
-}
-
-TEST(PalTestCase, PalindromFalseTest) {
-
-	EXPECT_EQ(is_palindrom("1122121"), false);
-}
+#include <gtest/gtest.h>
 
 TEST(VectorTestCase, VectorPushBack) {
 
@@ -30,12 +21,6 @@ TEST(VectorTestCase, VectorInsert) {
 	mv.insert(89, mv.begin());
 	EXPECT_EQ(mv[0], 89);
 }
-
-TEST(SmokeTestCase, SmokeTest) {
-
-	EXPECT_EQ(is_palindrom("1122121"), false);
-}
-
 int main (int argc, char* argv[]){
 	::testing::InitGoogleTest(&argc, argv);
 	return RUN_ALL_TESTS();
