@@ -25,7 +25,7 @@
 TEST(VectorTestCase, Test1) {
 
 	int v[] = {1, 2, 3, 4, 5};
-	EXPECT_EQ(v[1], 1);
+	EXPECT_EQ(v[0], 1);
 }
 
 TEST(VectorTestCase, Test2) {
