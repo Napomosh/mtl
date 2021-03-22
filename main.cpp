@@ -5,7 +5,7 @@
 
 int main() {
 	ns::mvector<std::string> v(5);
-	v.push_back("a");
+	//v.push_back("a");
 	v.push_back("b");
 	v.push_back("d");
 	ns::mvector<std::string> v1();
