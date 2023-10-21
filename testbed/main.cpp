@@ -1,4 +1,4 @@
-#include "mvector.h"
+#include "../inc/mvector.h"
 
 #include <iostream>
 #include <string>

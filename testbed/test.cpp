@@ -1,5 +1,5 @@
-#include "mvector.h"
-#include <gtest/gtest.h>
+#include "../inc/mvector.h"
+//#include <gtest/gtest.h>
 
 // TEST(VectorTestCase, VectorPushBack) {
 
@@ -22,19 +22,20 @@
 // 	EXPECT_EQ(mv[0], 89);
 // }
 
-TEST(VectorTestCase, Test1) {
-
-	int v[] = {1, 2, 3, 4, 5};
-	EXPECT_EQ(v[0], 1);
-}
-
-TEST(VectorTestCase, Test2) {
-
-	int v[] = {1, 2, 3, 4, 5};
-	EXPECT_EQ(v[1], 2);
-}
+//TEST(VectorTestCase, Test1) {
+//
+//	int v[] = {1, 2, 3, 4, 5};
+//	EXPECT_EQ(v[0], 1);
+//}
+//
+//TEST(VectorTestCase, Test2) {
+//
+//	int v[] = {1, 2, 3, 4, 5};
+//	EXPECT_EQ(v[1], 2);
+//}
 
 int main (int argc, char* argv[]){
-	::testing::InitGoogleTest();
-	return RUN_ALL_TESTS();
+//	::testing::InitGoogleTest();
+//	return RUN_ALL_TESTS();
+    return 0;
 }

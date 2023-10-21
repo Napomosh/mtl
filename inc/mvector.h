@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include <cstdint>
 
 namespace ns{
 	/**
@@ -266,199 +267,199 @@ namespace ns{
 	}
 
 	private:
-		T* _data; 	
-		size_t _size;	
-		size_t _capacity;
+		T* data_;
+		size_t size_;
+		size_t capacity_;
 
-		void reserve(const size_t new_size);
+		void reserve(size_t new_size);
 	};
 
 	template<class T> 
-	mvector<T>::mvector() : _size(0), _capacity(0) {}
+	mvector<T>::mvector() : size_(0), capacity_(0) {}
 
 	template<class T>
-	mvector<T>::mvector(size_t capacity) : _data(new T[capacity]), _size(0),
-	 _capacity(capacity) {}
+	mvector<T>::mvector(size_t capacity) : data_(new T[capacity]), size_(0),
+                                           capacity_(capacity) {}
 
 	 template<class T>
-	 mvector<T>::mvector(const mvector<T>& v) : _size(v.size()), 
-	 _capacity(v.capacity()), _data(new T[v.capacity()]) {
-	 	for(size_t i = 0; i < _size; ++i) {
-	 		_data[i] = v[i];
+	 mvector<T>::mvector(const mvector<T>& v) : size_(v.size()),
+                                                capacity_(v.capacity()), data_(new T[v.capacity()]) {
+	 	for(size_t i = 0; i < size_; ++i) {
+            data_[i] = v[i];
 	 	}
 	 }
 
 	template<class T>
 	mvector<T>::~mvector() {
-		delete[] _data;
+		delete[] data_;
 	}
 
 
 	template<class T>
 	size_t mvector<T>::size() const {
-		return _size;
+		return size_;
 	}
 
 	template<class T>
 	size_t mvector<T>::capacity() const {
-		return _capacity;
+		return capacity_;
 	}
 
 	template<class T>
 	bool mvector<T>::empty() const {
-		return _size == 0;
+		return size_ == 0;
 	}
 
 	template<class T>
 	const T& mvector<T>::operator[](const size_t idx) const {
-		return _data[idx];
+		return data_[idx];
 	}
 
 	template<class T>
 	T& mvector<T>::operator[](const size_t idx) {
-		return _data[idx];
+		return data_[idx];
 	}
 
 	template<class T>
 	const T& mvector<T>::at(const size_t idx) const{
-		if(idx < 0 || idx >= _size) {
+		if(idx < 0 || idx >= size_) {
 			throw std::out_of_range("Invalidate index!");
 		}
-		return _data[idx];
+		return data_[idx];
 	}
 
 	template<class T>
 	T& mvector<T>::at(const size_t idx) {
-		if(idx < 0 || idx >= _size) {
+		if(idx < 0 || idx >= size_) {
 			throw std::out_of_range("Invalidate index!");
 		}
-		return _data[idx];
+		return data_[idx];
 	}
 
 	template<class T>
 	const T* mvector<T>::begin() const {
-		return _data;
+		return data_;
 	}
 
 	template<class T>
 	T* mvector<T>::begin() {
-		return _data;
+		return data_;
 	}
 
 	template<class T>
 	const T* mvector<T>::end() const {
-		return *(_data + size);
+		return *(data_ + size_);
 	}
 
 	template<class T>
 	T* mvector<T>::end() {
-		return _data + _size;
+		return data_ + size_;
 	}
 
 	template<class T>
 	void mvector<T>::push_back(const T& value) {
-		if(_capacity == 0) {
+		if(capacity_ == 0) {
 			reserve(8);
 		}
-		else if(_size == _capacity) {
-			reserve(_capacity * 2);
+		else if(size_ == capacity_) {
+			reserve(capacity_ * 2);
 		}
 
-		_data[_size++] = value;
+        data_[size_++] = value;
 	}
 
 	template<class T>
 	void mvector<T>::insert(const T& value, const T* pos) {
-		if(_size == _capacity) {
-			resize(_size * 2);
+		if(size_ == capacity_) {
+			resize(size_ * 2);
 		}
 
 		size_t position = pos - begin();
-		T* tmp_data = new T[_capacity];
-		_size++;
+		T* tmp_data = new T[capacity_];
+		size_++;
 
 		for(size_t i = 0; i < position; ++i) {
-			tmp_data[i] = _data[i];
+			tmp_data[i] = data_[i];
 		}
 		tmp_data[position] = value;
-		for(size_t i = position + 1; i < _size; ++i) {
-			tmp_data[i] = _data[i - 1];
+		for(size_t i = position + 1; i < size_; ++i) {
+			tmp_data[i] = data_[i - 1];
 		}
-		delete[] _data;
-		_data = tmp_data;
+		delete[] data_;
+        data_ = tmp_data;
 	}
 
 	template<class T>
 	void mvector<T>::pop_back() {
-		if(_size == 0) {
+		if(size_ == 0) {
 			return;
 		}
-		// _data[_size].~T();
-		_size--;
+		// data_[size_].~T();
+		size_--;
 	}
 
 	template<class T>
 	void mvector<T>::erase(const T* pos) {
 		size_t index_erasing_elem = pos - begin();
-		T* tmp_data = new T[_capacity];
+		T* tmp_data = new T[capacity_];
 
 		for(size_t i = 0; i < index_erasing_elem; ++i) {
-			tmp_data[i] = _data[i];
+			tmp_data[i] = data_[i];
 		}	
-		// _data[index_erasing_elem].~T();
-		for(size_t i = index_erasing_elem + 1; i < _size; ++i) {
-			tmp_data[i - 1] = _data[i];
+		// data_[index_erasing_elem].~T();
+		for(size_t i = index_erasing_elem + 1; i < size_; ++i) {
+			tmp_data[i - 1] = data_[i];
 		}
-		_data = tmp_data;
-		_size--;
+        data_ = tmp_data;
+		size_--;
 	}
 
 	template<class T>
 	void mvector<T>::resize(const size_t new_size) {
-		if(new_size <= _capacity) {
+		if(new_size <= capacity_) {
 			std::cerr << "New size is lower then current size. Size not changed."
 					  << std::endl;
 			return;
 		}
 		else {
 			reserve(new_size);
-			for(size_t i = _size; i < new_size; ++i) {
-				 _data[i] = T();
+			for(size_t i = size_; i < new_size; ++i) {
+                data_[i] = T();
 			}
 		}
 	}
 
 	template<class T>
 	void mvector<T>::clear() {
-		delete[] _data;
-		_data = new T[_capacity];
-		_size = 0;
+		delete[] data_;
+        data_ = new T[capacity_];
+        size_ = 0;
 	}
 
 	template<class T>
 	void mvector<T>::shrink_to_fit() {
-		if(_size == _capacity) {
+		if(size_ == capacity_) {
 			return;
 		}
-		_capacity = _size;
-		T* tmp_data = new T[_capacity];
+        capacity_ = size_;
+		T* tmp_data = new T[capacity_];
 
-		for(size_t i = 0; i < _size; ++i){
-			tmp_data[i] = _data[i];
+		for(size_t i = 0; i < size_; ++i){
+			tmp_data[i] = data_[i];
 		}
-		delete[] _data;
-		_data = tmp_data;
+		delete[] data_;
+        data_ = tmp_data;
 	}
 
 	template<class T>
 	mvector<T>& mvector<T>::operator=(const mvector<T>& rhs) {
-		_size = rhs.size();
-		_capacity = rhs.capacity();
-		delete[] _data;
-		_data = new T[_capacity];
+        size_ = rhs.size();
+        capacity_ = rhs.capacity();
+		delete[] data_;
+        data_ = new T[capacity_];
 
-		for(size_t i = 0; i < _size; ++i) {
-			_data[i] = rhs[i];
+		for(size_t i = 0; i < size_; ++i) {
+            data_[i] = rhs[i];
 		}
 
 		return *this;
@@ -467,21 +468,31 @@ namespace ns{
 	/*---------- PRIVATE METHODS ----------*/
 
 	template<class T>
-	void mvector<T>::reserve(const size_t new_size) {
-		if(new_size <= _capacity) {
+	void mvector<T>::reserve(size_t new_size) {
+		if(new_size <= capacity_) {
 			std::cerr << "New size is lower then current size. Size not changed."
 				 	  << std::endl;
 			return;
 		}
-		else {
-			T* new_data = new T[new_size];
-			for(size_t i = 0; i < _size; ++i) {
-				new_data[i] = _data[i];
-			}
-			delete[] _data;
-			_data = new_data;
-			_capacity = new_size;
-		}
+        T* new_data = reinterpret_cast<T*>(new int8_t[new_size * sizeof(T)]);
+        size_t i = 0;
+        try {
+            for (; i < size_; ++i)
+                new(new_data + i) T(data_[i]);
+        }
+        catch(...){
+            for (size_t j = 0; j < i; ++j)
+                (new_data + j)->~T();
+
+            delete [] reinterpret_cast<int8_t*>(new_data);
+            throw;
+        }
+        for(size_t k = 0; k < size_; ++k)
+            (data_ + k)->~T();
+        delete [] reinterpret_cast<int8_t*>(data_);
+        data_ = new_data;
+        capacity_ = new_size;
+        size_ = new_size;
 	}
 };
 
