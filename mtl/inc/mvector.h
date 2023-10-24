@@ -11,7 +11,9 @@
 #include <iostream>
 #include <string>
 #include <exception>
-#include <cstdint>
+
+#include <vector>
+#include "defines.h"
 
 namespace ns{
 	/**
@@ -44,7 +46,7 @@ namespace ns{
 		/**
 		*	Destroy all data of vector
 		**/
-		~mvector();
+		~mvector() noexcept;
 
 		/**
 		*	@name Capacity
@@ -57,7 +59,7 @@ namespace ns{
 		*	@return The number of elements in the container
 		*	@exception none
 		**/
-		size_t size() const;
+		size_t size() const noexcept;
 
 		/**
 		*	Get the capasity of the current container.
@@ -65,7 +67,7 @@ namespace ns{
 		*	@return Number of elements for which memory space is allocated
 		*	@exception none
 		**/
-		size_t capacity() const;
+		size_t capacity() const noexcept;
 
 		/**
 		*	Return true if the vector is empty.
@@ -73,7 +75,7 @@ namespace ns{
 		*	@return Return true if the vector is empty, else return false
 		*	@exception none
 		**/
-		bool empty() const;
+		bool empty() const noexcept;
 
 		/**
 		*	@}
@@ -278,35 +280,39 @@ namespace ns{
 	mvector<T>::mvector() : size_(0), capacity_(0) {}
 
 	template<class T>
-	mvector<T>::mvector(size_t capacity) : data_(new T[capacity]), size_(0),
+	mvector<T>::mvector(size_t capacity) : data_(reinterpret_cast<T*>(new int8_t[capacity * sizeof(T)])), size_(0),
                                            capacity_(capacity) {}
 
 	 template<class T>
-	 mvector<T>::mvector(const mvector<T>& v) : size_(v.size()),
-                                                capacity_(v.capacity()), data_(new T[v.capacity()]) {
+	 mvector<T>::mvector(const mvector<T>& v) : size_(v.size())
+                                                , capacity_(v.capacity())
+                                                , data_(reinterpret_cast<T*>(new int8_t[capacity_ * sizeof(T)])) {
 	 	for(size_t i = 0; i < size_; ++i) {
-            data_[i] = v[i];
+            new (data_ + i) T(v[i]);
 	 	}
 	 }
 
 	template<class T>
-	mvector<T>::~mvector() {
-		delete[] data_;
+	mvector<T>::~mvector() noexcept {
+        for(size_t i = 0; i < size_; ++i){
+            (data_ + i)->~T();
+        }
+		delete[] reinterpret_cast<int8_t*>(data_);
 	}
 
 
 	template<class T>
-	size_t mvector<T>::size() const {
+	size_t mvector<T>::size() const noexcept {
 		return size_;
 	}
 
 	template<class T>
-	size_t mvector<T>::capacity() const {
+	size_t mvector<T>::capacity() const noexcept {
 		return capacity_;
 	}
 
 	template<class T>
-	bool mvector<T>::empty() const {
+	bool mvector<T>::empty() const noexcept {
 		return size_ == 0;
 	}
 
@@ -323,7 +329,7 @@ namespace ns{
 	template<class T>
 	const T& mvector<T>::at(const size_t idx) const{
 		if(idx < 0 || idx >= size_) {
-			throw std::out_of_range("Invalidate index!");
+			throw std::out_of_range("Invalid index!");
 		}
 		return data_[idx];
 	}
@@ -331,7 +337,7 @@ namespace ns{
 	template<class T>
 	T& mvector<T>::at(const size_t idx) {
 		if(idx < 0 || idx >= size_) {
-			throw std::out_of_range("Invalidate index!");
+			throw std::out_of_range("Invalid index!");
 		}
 		return data_[idx];
 	}
@@ -359,13 +365,13 @@ namespace ns{
 	template<class T>
 	void mvector<T>::push_back(const T& value) {
 		if(capacity_ == 0) {
-			reserve(8);
+			reserve(VBEGIN_CAPACITY);
 		}
 		else if(size_ == capacity_) {
-			reserve(capacity_ * 2);
+			reserve(capacity_ * VCOEFFICIENT_EXTENSION);
 		}
-
-        data_[size_++] = value;
+        new(data_ + size_) T(value);
+        ++size_;
 	}
 
 	template<class T>
@@ -391,11 +397,8 @@ namespace ns{
 
 	template<class T>
 	void mvector<T>::pop_back() {
-		if(size_ == 0) {
-			return;
-		}
-		// data_[size_].~T();
-		size_--;
+        (data_ + (size_ - 1))->~T();
+		--size_;
 	}
 
 	template<class T>
